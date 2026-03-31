@@ -1,11 +1,11 @@
-// src/context/MovieContext.jsx
+
 import React, { createContext, useState } from "react";
 
 export const MovieContext = createContext();
 
 export const MovieProvider = ({ children }) => {
   const [movies, setMovies] = useState([
-    // 🎬 Action
+    
     {
       id: 1,
       title: "Inception",
@@ -43,7 +43,7 @@ export const MovieProvider = ({ children }) => {
       full: "https://example.com/blackpanther.mp4",
     },
 
-    // 👻 Horror
+    
     {
       id: 5,
       title: "The Conjuring",
@@ -72,7 +72,7 @@ export const MovieProvider = ({ children }) => {
       full: "https://example.com/annabelle.mp4",
     },
 
-    // ❄️ Cartoon
+    
     {
       id: 8,
       title: "Frozen",
@@ -101,7 +101,7 @@ export const MovieProvider = ({ children }) => {
       full: "https://example.com/kungfu.mp4",
     },
 
-    // 🌌 Sci-Fi
+   
     {
       id: 11,
       title: "Avatar",

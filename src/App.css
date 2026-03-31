@@ -1,6 +1,4 @@
-/* -------------------------
-   GENERAL STYLES
--------------------------- */
+
 body {
   margin: 0;
   font-family: 'Poppins', sans-serif;
@@ -13,9 +11,7 @@ a {
   color: inherit;
 }
 
-/* -------------------------
-   HEADER / NAVBAR
--------------------------- */
+
 .header {
   background-color: #1f1f1f;
   display: flex;
@@ -52,17 +48,12 @@ a {
   color: #000;
 }
 
-/* -------------------------
-   MAIN CONTAINER
--------------------------- */
 .main {
   padding: 40px 20px;
   min-height: 80vh;
 }
 
-/* -------------------------
-   FOOTER
--------------------------- */
+
 .footer {
   background-color: #1f1f1f;
   text-align: center;
@@ -71,9 +62,7 @@ a {
   color: #ccc;
 }
 
-/* -------------------------
-   HOME PAGE
--------------------------- */
+
 .home {
   text-align: center;
   margin-top: 50px;
@@ -95,9 +84,7 @@ a {
   margin: 0 10px;
 }
 
-/* -------------------------
-   BUTTONS
--------------------------- */
+
 .btn, button, .download-btn {
   display: inline-block;
   background-color: #f5c518;
@@ -115,9 +102,7 @@ a {
   background-color: #ffda45;
 }
 
-/* -------------------------
-   MOVIES GRID
--------------------------- */
+
 .category-filter {
   margin-bottom: 30px;
   text-align: center;
@@ -183,9 +168,7 @@ a {
   gap: 8px;
 }
 
-/* -------------------------
-   TRAILER MODAL
--------------------------- */
+
 .trailer-modal {
   position: fixed;
   top: 0;
@@ -221,9 +204,7 @@ a {
   color: #f5c518;
 }
 
-/* -------------------------
-   MOVIE DETAIL PAGE
--------------------------- */
+
 .movie-detail {
   text-align: center;
 }
@@ -254,9 +235,6 @@ a {
   margin-bottom: 10px;
 }
 
-/* -------------------------
-   NOT FOUND PAGE
--------------------------- */
 .notfound, .about {
   text-align: center;
   margin-top: 50px;

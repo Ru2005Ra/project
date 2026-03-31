@@ -1,5 +1,6 @@
+
 import React from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 
 const movies = [
   {
@@ -46,12 +47,13 @@ const movies = [
     category: "Horror",
     trailer: "https://www.youtube.com/embed/k10ETZ41q5o",
     full: "https://example.com/conjuring.mp4"
-  },
+  }
 ];
 
 function MovieDetail() {
   const { id } = useParams();
-  const movie = movies.find((m) => m.id === parseInt(id));
+  const navigate = useNavigate();
+  const movie = movies.find((m) => m.id === parseInt(id, 10));
 
   if (!movie) {
     return (
@@ -62,6 +64,52 @@ function MovieDetail() {
     );
   }
 
+  const handleWatchFull = () => {
+    navigate(`/player/${movie.id}`, { state: { movie } });
+  };
+
+  const handleDownload = async () => {
+    try {
+      
+      const downloadUrl = `/api/download/${movie.id}`;
+
+      const res = await fetch(downloadUrl, {
+        method: 'GET',
+        headers: {
+          'Accept': 'application/octet-stream'
+          
+        }
+      });
+
+      if (res.status === 401 || res.status === 403) {
+        throw new Error('You are not authorized to download this file.');
+      }
+
+      if (!res.ok) {
+        const contentType = res.headers.get('content-type') || '';
+        const text = contentType.includes('application/json') ? await res.json() : await res.text();
+        throw new Error(text?.message || text || `Server error ${res.status}`);
+      }
+
+      const blob = await res.blob();
+      const disposition = res.headers.get('content-disposition') || '';
+      const filenameMatch = disposition.match(/filename="?(.+)"?/);
+      const filename = filenameMatch ? filenameMatch[1] : `${movie.title.replace(/\s+/g, '_')}.mp4`;
+
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (err) {
+      console.error('Download error', err);
+      alert(`Download failed: ${err.message}`);
+    }
+  };
+
   return (
     <div className="movie-detail">
       <h2>{movie.title}</h2>
@@ -71,6 +119,7 @@ function MovieDetail() {
         <img src={movie.img} alt={movie.title} className="detail-image" />
         <div className="movie-info">
           <p>{movie.desc}</p>
+
           <h3>🎥 Watch Trailer</h3>
           <iframe
             width="100%"
@@ -80,9 +129,15 @@ function MovieDetail() {
             allowFullScreen
           ></iframe>
 
-          <a href={movie.full} className="btn" target="_blank" rel="noreferrer">
-            ▶ Watch Full Movie
-          </a>
+          <div style={{ marginTop: 12 }}>
+            <button onClick={handleWatchFull} className="btn" style={{ marginRight: 8 }}>
+              ▶ Watch Full
+            </button>
+
+            <button onClick={handleDownload} className="btn">
+              ⤓ Download
+            </button>
+          </div>
         </div>
       </div>
 
