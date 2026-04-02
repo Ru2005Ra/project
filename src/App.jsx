@@ -6,6 +6,7 @@ import AboutUs from "./components/AboutUs";
 import Movies from "./components/Movies";
 import MovieDetail from "./components/MovieDetail";
 import FullPlayer from "./components/FullPlayer";
+import MovieList from "./components/MovieList";   
 import NotFound from "./components/NotFound";
 import Admin from "./components/Admin";
 

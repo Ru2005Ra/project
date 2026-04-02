@@ -1,4 +1,3 @@
-
 import React, { useEffect, useRef, useState } from 'react';
 import { useParams, useLocation, Link } from 'react-router-dom';
 import Hls from 'hls.js';
@@ -8,12 +7,23 @@ export default function FullPlayer() {
   const location = useLocation();
   const passedMovie = location.state?.movie || null;
   const [movie, setMovie] = useState(passedMovie);
-  const [type, setType] = useState(null); 
+  const [type, setType] = useState(null);
+  const videoRef = useRef(null);
 
+ 
+  const detectType = (url) => {
+    if (!url) return;
+    if (url.includes('youtube.com') || url.includes('youtu.be')) setType('youtube');
+    else if (url.endsWith('.m3u8')) setType('hls');
+    else setType('mp4');
+  };
+
+  // Fetch movie data if not passed via location.state
   useEffect(() => {
     async function fetchMeta() {
-      if (movie) {
-        detectType(movie.full);
+      if (passedMovie) {
+        setMovie(passedMovie);
+        detectType(passedMovie.full);
         return;
       }
       try {
@@ -26,40 +36,41 @@ export default function FullPlayer() {
         console.error('Failed to fetch movie metadata', err);
       }
     }
-
-    function detectType(url) {
-      if (!url) return;
-      if (url.includes('youtube.com') || url.includes('youtu.be')) setType('youtube');
-      else if (url.endsWith('.m3u8')) setType('hls');
-      else setType('mp4');
-    }
-
     fetchMeta();
-  }, [id, movie]);
+    // eslint-disable-next-line
+  }, [id]); // Only depend on id
 
+  // Handle HLS playback
   useEffect(() => {
+    let hls;
     if (type === 'hls' && movie?.full && videoRef.current) {
       const video = videoRef.current;
       if (Hls.isSupported()) {
-        const hls = new Hls();
+        hls = new Hls();
         hls.loadSource(movie.full);
         hls.attachMedia(video);
         hls.on(Hls.Events.MANIFEST_PARSED, () => {});
-        return () => hls.destroy();
       } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
         video.src = movie.full;
       } else {
         console.error('HLS not supported in this browser');
       }
     }
+    return () => {
+      if (hls) {
+        hls.destroy();
+      }
+    };
   }, [type, movie]);
 
   if (!movie) return <div>Loading player...</div>;
 
   if (type === 'youtube') {
-    const match = movie.full.match(/(youtu\.be\/|v=)([^&?/]+)/);
+    const match = movie.full.match(/(youtu\.be\/|v=|embed\/)([^&?/]+)/);
     const videoId = match ? match[2] : null;
-    const src = `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`;
+    const src = videoId
+      ? `https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1`
+      : movie.full;
     return (
       <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         <h2>{movie.title}</h2>
@@ -93,7 +104,6 @@ export default function FullPlayer() {
         {type === 'mp4' && <source src={movie.full} type="video/mp4" />}
         Your browser does not support the video tag.
       </video>
-
       <div style={{ marginTop: 12 }}>
         <Link to={`/movies/${movie.id}`} className="btn">← Back</Link>
       </div>
